@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Research Shelf - Jason Horne</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --accent: #4A6FA5;
+      --accent-light: #e8eef6;
+      --accent-dark: #3a5a8f;
+      --text: #1a1a1a;
+      --text-mid: #555;
+      --text-light: #888;
+      --bg: #fafaf8;
+      --card-bg: #ffffff;
+      --border: #e4e4e0;
+      --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-hover: 0 8px 24px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.06);
+
+      /* Category colors — muted, distinct */
+      --cat-k12: #4a7c59;
+      --cat-k12-bg: #eef4f0;
+      --cat-ai: #5a6ea5;
+      --cat-ai-bg: #eceef8;
+      --cat-ops: #8a6a3a;
+      --cat-ops-bg: #f5f0e8;
+      --cat-hist: #7a4f6a;
+      --cat-hist-bg: #f3edf1;
+      --cat-personal: #4a7a8a;
+      --cat-personal-bg: #eaf2f4;
+      --cat-media: #7a5a3a;
+      --cat-media-bg: #f4efe8;
+    }
+
+    html {
+      font-size: 16px;
+    }
+
+    body {
+      font-family: Georgia, 'Times New Roman', Times, serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 3rem 2rem 2.5rem;
+      text-align: center;
+    }
+
+    .site-header .eyebrow {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 0.75rem;
+    }
+
+    .site-header h1 {
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      font-weight: normal;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      line-height: 1.15;
+      margin-bottom: 0.8rem;
+    }
+
+    .site-header .subtitle {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.975rem;
+      color: var(--text-mid);
+      max-width: 540px;
+      margin: 0 auto;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    .header-rule {
+      width: 48px;
+      height: 2px;
+      background: var(--accent);
+      margin: 1.5rem auto 0;
+      border: none;
+    }
+
+    /* ── CONTROLS ── */
+    .controls {
+      max-width: 1100px;
+      margin: 2.5rem auto 0;
+      padding: 0 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .search-wrap {
+      position: relative;
+      max-width: 480px;
+    }
+
+    .search-wrap svg {
+      position: absolute;
+      left: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      stroke: var(--text-light);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      pointer-events: none;
+    }
+
+    #search {
+      width: 100%;
+      padding: 0.62rem 1rem 0.62rem 2.4rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      background: var(--card-bg);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    #search::placeholder {
+      color: var(--text-light);
+    }
+
+    #search:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.12);
+    }
+
+    /* ── FILTER PILLS ── */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .filter-pill {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 0.38rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      color: var(--text-mid);
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .filter-pill:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    .filter-pill.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* ── GRID ── */
+    .grid-section {
+      max-width: 1100px;
+      margin: 2rem auto 0;
+      padding: 0 2rem;
+      flex: 1;
+    }
+
+    .count-line {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-bottom: 1.25rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.4rem;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.4rem 1.5rem 1.25rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-3px);
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.85rem;
+    }
+
+    .badge {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 0.22rem 0.6rem;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .badge-k12       { color: var(--cat-k12);      background: var(--cat-k12-bg); }
+    .badge-ai        { color: var(--cat-ai);       background: var(--cat-ai-bg); }
+    .badge-ops       { color: var(--cat-ops);      background: var(--cat-ops-bg); }
+    .badge-hist      { color: var(--cat-hist);     background: var(--cat-hist-bg); }
+    .badge-personal  { color: var(--cat-personal); background: var(--cat-personal-bg); }
+    .badge-media     { color: var(--cat-media);    background: var(--cat-media-bg); }
+
+    .card-date {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.72rem;
+      color: var(--text-light);
+    }
+
+    .card h2 {
+      font-size: 1.025rem;
+      font-weight: normal;
+      line-height: 1.4;
+      color: var(--text);
+      margin-bottom: 0.55rem;
+    }
+
+    .card p {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.845rem;
+      color: var(--text-mid);
+      line-height: 1.55;
+      flex: 1;
+      margin-bottom: 1.2rem;
+    }
+
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      align-self: flex-start;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--accent);
+      text-decoration: none;
+      padding: 0.38rem 0.85rem;
+      border: 1px solid var(--accent);
+      border-radius: 5px;
+      transition: background 0.15s, color 0.15s;
+      margin-top: auto;
+    }
+
+    .download-btn svg {
+      width: 13px;
+      height: 13px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    .download-btn:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      display: none;
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text-light);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.9rem;
+      grid-column: 1 / -1;
+    }
+
+    .empty-state.visible {
+      display: block;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      max-width: 1100px;
+      margin: 3.5rem auto 0;
+      padding: 1.5rem 2rem 2.5rem;
+      border-top: 1px solid var(--border);
+      width: 100%;
+    }
+
+    footer p {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 0.8rem;
+      color: var(--text-light);
+      line-height: 1.6;
+      max-width: 680px;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .site-header {
+        padding: 2rem 1.25rem 1.75rem;
+      }
+
+      .controls {
+        padding: 0 1.25rem;
+      }
+
+      .grid-section {
+        padding: 0 1.25rem;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      footer {
+        padding: 1.5rem 1.25rem 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <p class="eyebrow">Jason Horne &mdash; jasonhorne.org</p>
+    <h1>The Research Shelf</h1>
+    <p class="subtitle">A growing library of deep dives, companion guides, and curiosity-driven research, built with Claude.</p>
+    <hr class="header-rule" />
+  </header>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="search" placeholder="Search reports..." autocomplete="off" />
+    </div>
+
+    <div class="filter-bar" id="filterBar">
+      <button class="filter-pill active" data-filter="all">All</button>
+      <button class="filter-pill" data-filter="k12">K-12 Education</button>
+      <button class="filter-pill" data-filter="ai">AI in Education</button>
+      <button class="filter-pill" data-filter="ops">District Operations</button>
+      <button class="filter-pill" data-filter="hist">History and Culture</button>
+      <button class="filter-pill" data-filter="personal">Personal Interest</button>
+      <button class="filter-pill" data-filter="media">Media Companions</button>
+    </div>
+  </div>
+
+  <!-- GRID -->
+  <section class="grid-section">
+    <p class="count-line" id="countLine"></p>
+    <div class="grid" id="cardGrid">
+
+      <!-- K-12 Education -->
+      <article class="card" data-category="k12" data-title="AI in K-12 Education: Student Outcomes Research Since 2023" data-desc="Comprehensive review of AI tools in K-12 education, including intelligent tutoring systems and adaptive learning.">
+        <div class="card-meta">
+          <span class="badge badge-k12">K-12 Education</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>AI in K-12 Education: Student Outcomes Research Since 2023</h2>
+        <p>Comprehensive review of AI tools in K-12 education, including intelligent tutoring systems and adaptive learning.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/k12-education/AI%20in%20K-12%20Education%20Student%20Outcomes%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="k12" data-title="Screen Time and Academic Performance in K-12 Schools" data-desc="Synthesizes 51 findings from 45 sources on how screen time impacts K-12 academic performance internationally.">
+        <div class="card-meta">
+          <span class="badge badge-k12">K-12 Education</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>Screen Time and Academic Performance in K-12 Schools</h2>
+        <p>Synthesizes 51 findings from 45 sources on how screen time impacts K-12 academic performance internationally.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/k12-education/2026-03-13%20Screen%20Time%20K-12%20Academic%20Performance%20Deep%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="k12" data-title="The Negative Impact of Technology in the K-12 Classroom" data-desc="Meta-analysis of peer-reviewed studies examining how classroom technology adoption affects K-12 learning outcomes.">
+        <div class="card-meta">
+          <span class="badge badge-k12">K-12 Education</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>The Negative Impact of Technology in the K-12 Classroom</h2>
+        <p>Meta-analysis of peer-reviewed studies examining how classroom technology adoption affects K-12 learning outcomes.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/k12-education/Negative%20Impact%20of%20Technology%20in%20K-12%20Classrooms%20-%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="k12" data-title="Professional Learning Communities and Student Outcomes" data-desc="Research on how professional learning communities affect student outcomes in K-12 schools.">
+        <div class="card-meta">
+          <span class="badge badge-k12">K-12 Education</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>Professional Learning Communities and Student Outcomes</h2>
+        <p>Research on how professional learning communities affect student outcomes in K-12 schools.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/k12-education/PLCs%20and%20Student%20Outcomes%20-%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="k12" data-title="Missouri's Through-Year Testing: The Success-Ready Student Assessment" data-desc="Analysis of Missouri's innovative through-year assessment program and implications for other states.">
+        <div class="card-meta">
+          <span class="badge badge-k12">K-12 Education</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>Missouri's Through-Year Testing: The Success-Ready Student Assessment</h2>
+        <p>Analysis of Missouri's innovative through-year assessment program and implications for other states.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/k12-education/2026-03-30%20Missouri%20Through-Year%20Testing%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="k12" data-title="The Impact of School Operations on Student Achievement" data-desc="Research on how non-instructional operations (maintenance, nursing, transportation, nutrition) affect student achievement.">
+        <div class="card-meta">
+          <span class="badge badge-k12">K-12 Education</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>The Impact of School Operations on Student Achievement</h2>
+        <p>Research on how non-instructional operations (maintenance, nursing, transportation, nutrition) affect student achievement.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/k12-education/2026-03-13%20School%20Operations%20Student%20Achievement%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="k12" data-title="Mississippi's Literacy Gains: Lessons Learned and Skepticism" data-desc="Causal evidence, skeptical critiques, and implementation lessons from Mississippi's decade of K-3 reading reform.">
+        <div class="card-meta">
+          <span class="badge badge-k12">K-12 Education</span>
+          <span class="card-date">April 2026</span>
+        </div>
+        <h2>Mississippi's Literacy Gains: Lessons Learned and Skepticism</h2>
+        <p>Causal evidence, skeptical critiques, and implementation lessons from Mississippi's decade of K-3 reading reform.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/k12-education/2026-04-12%20Mississippi%20Literacy%20Gains%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="k12" data-title="Real Leadership: Book Positioning Analysis" data-desc="Where a proposed book arguing U.S. school leadership has devolved into compliance-based management would fit into the existing canon, and the publisher strategy to match.">
+        <div class="card-meta">
+          <span class="badge badge-k12">K-12 Education</span>
+          <span class="card-date">April 2026</span>
+        </div>
+        <h2>Real Leadership: Book Positioning Analysis</h2>
+        <p>Where a proposed book arguing U.S. school leadership has devolved into compliance-based management would fit into the existing canon, and the publisher strategy to match.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/k12-education/2026-04-18%20Real%20Leadership%20Book%20Positioning%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="k12" data-title="Tennessee's Mandatory Attendance Law" data-desc="What to do when a student disappears: legal obligations, best practices, and equity considerations under Tennessee's compulsory attendance statute.">
+        <div class="card-meta">
+          <span class="badge badge-k12">K-12 Education</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>Tennessee's Mandatory Attendance Law</h2>
+        <p>What to do when a student disappears: legal obligations, best practices, and equity considerations under Tennessee's compulsory attendance statute.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/k12-education/2026-03-12%20TN%20Mandatory%20Attendance%20Law%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="k12" data-title="Northeast Tennessee K-12 Enrollment Trends, 2015-2025" data-desc="A 10-year regional analysis of K-12 enrollment across the 13 public school systems of Northeast Tennessee, with district-by-district comparisons and grade-band breakdowns.">
+        <div class="card-meta">
+          <span class="badge badge-k12">K-12 Education</span>
+          <span class="card-date">April 2026</span>
+        </div>
+        <h2>Northeast Tennessee K-12 Enrollment Trends, 2015-2025</h2>
+        <p>A 10-year regional analysis of K-12 enrollment across the 13 public school systems of Northeast Tennessee, with district-by-district comparisons and grade-band breakdowns.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/k12-education/2026-04-29%20NE%20TN%20K-12%20Enrollment%20Trends%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="k12" data-title="Northeast Tennessee K-12 Finance Trends, 2018-2025" data-desc="A six-year regional analysis of per-pupil expenditures across the 13 public school systems of Northeast Tennessee, with funding-source mix, city-vs-county patterns, and cross-reference to enrollment.">
+        <div class="card-meta">
+          <span class="badge badge-k12">K-12 Education</span>
+          <span class="card-date">April 2026</span>
+        </div>
+        <h2>Northeast Tennessee K-12 Finance Trends, 2018-2025</h2>
+        <p>A six-year regional analysis of per-pupil expenditures across the 13 public school systems of Northeast Tennessee, with funding-source mix, city-vs-county patterns, and cross-reference to enrollment.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/k12-education/2026-04-29%20NE%20TN%20K-12%20Finance%20Trends%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="k12" data-title="White Space, Strategic Thinking, and Reading at Senior Leadership Levels" data-desc="What the empirical and practitioner literature says about how senior leaders should allocate time between reactive work, strategic thinking, deliberate learning, and unstructured white space, with K-12 superintendent application.">
+        <div class="card-meta">
+          <span class="badge badge-k12">K-12 Education</span>
+          <span class="card-date">May 2026</span>
+        </div>
+        <h2>White Space, Strategic Thinking, and Reading at Senior Leadership Levels</h2>
+        <p>What the empirical and practitioner literature says about how senior leaders should allocate time between reactive work, strategic thinking, deliberate learning, and unstructured white space, with K-12 superintendent application.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/k12-education/2026-05-04%20White%20Space%20Strategic%20Thinking%20and%20Reading%20Deep%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="k12" data-title="Direct Instruction vs. Inclusion in Special Education" data-desc="Why the choice between Direct Instruction and inclusion is a category error: the teaching method has strong evidence, the placement model does not, and instructional quality beats setting.">
+        <div class="card-meta">
+          <span class="badge badge-k12">K-12 Education</span>
+          <span class="card-date">May 2026</span>
+        </div>
+        <h2>Direct Instruction vs. Inclusion in Special Education</h2>
+        <p>Why the choice between Direct Instruction and inclusion is a category error: the teaching method has strong evidence, the placement model does not, and instructional quality beats setting.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/k12-education/2026-05-15%20Direct%20Instruction%20vs%20Inclusion%20Deep%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <!-- AI in Education -->
+      <article class="card" data-category="ai" data-title="AI-Powered Transformation of K-12 District Operations by Department" data-desc="Practical playbook for how AI can transform seven core operational departments in a small school district.">
+        <div class="card-meta">
+          <span class="badge badge-ai">AI in Education</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>AI-Powered Transformation of K-12 District Operations by Department</h2>
+        <p>Practical playbook for how AI can transform seven core operational departments in a small school district.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/ai-in-education/2026-03-15%20AI%20District%20Operations%20by%20Department%20Deep%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="ai" data-title="AI Adoption for RTI, Tutoring, and Student Outcomes" data-desc="Research synthesis on AI tools for response-to-intervention and tutoring with evidence of effectiveness.">
+        <div class="card-meta">
+          <span class="badge badge-ai">AI in Education</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>AI Adoption for RTI, Tutoring, and Student Outcomes</h2>
+        <p>Research synthesis on AI tools for response-to-intervention and tutoring with evidence of effectiveness.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/ai-in-education/AI%20Adoption%20for%20RTI%20Tutoring%20and%20Student%20Outcomes%20-%202026-02-14.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="ai" data-title="Incorporating AI into School Operations: A Playbook for District Leaders" data-desc="Evidence-based playbook for K-12 district leaders adopting AI across operations.">
+        <div class="card-meta">
+          <span class="badge badge-ai">AI in Education</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>Incorporating AI into School Operations: A Playbook for District Leaders</h2>
+        <p>Evidence-based playbook for K-12 district leaders adopting AI across operations.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/ai-in-education/2026-03-15%20AI%20School%20Operations%20Playbook%20Deep%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="ai" data-title="AI Slop: Examples, Scale, and Impact" data-desc="The scale and impact of low-quality AI-generated content proliferating across the internet and media.">
+        <div class="card-meta">
+          <span class="badge badge-ai">AI in Education</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>AI Slop: Examples, Scale, and Impact</h2>
+        <p>The scale and impact of low-quality AI-generated content proliferating across the internet and media.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/ai-in-education/AI%20Slop%20Examples%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="ai" data-title="AI in a University Setting: Student Preferences and Perceptions" data-desc="Synthesis of 50+ studies on how university students perceive and use generative AI.">
+        <div class="card-meta">
+          <span class="badge badge-ai">AI in Education</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>AI in a University Setting: Student Preferences and Perceptions</h2>
+        <p>Synthesis of 50+ studies on how university students perceive and use generative AI.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/ai-in-education/2026-03-24%20AI%20University%20Student%20Perceptions%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="ai" data-title="Education Administrators Using Claude Code" data-desc="Deep research on whether any K-12 superintendent has adopted Claude Code (finding: no documented cases).">
+        <div class="card-meta">
+          <span class="badge badge-ai">AI in Education</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>Education Administrators Using Claude Code</h2>
+        <p>Deep research on whether any K-12 superintendent has adopted Claude Code (finding: no documented cases).</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/ai-in-education/2026-03-22%20Education%20Administrators%20Using%20Claude%20Code%20Deep%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="ai" data-title="From Hello World to Operations Platform: Claude Code in 60 Days" data-desc="Quantitative analysis of Claude Code usage across 148 sessions in education operations workflows.">
+        <div class="card-meta">
+          <span class="badge badge-ai">AI in Education</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>From Hello World to Operations Platform: Claude Code in 60 Days</h2>
+        <p>Quantitative analysis of Claude Code usage across 148 sessions in education operations workflows.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/ai-in-education/Claude%20Code%20Evolution%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+
+      <article class="card" data-category="ai" data-title="Does Saying Please to AI Actually Help?" data-desc="Research on whether politeness affects AI response quality, and what those extra tokens cost at scale.">
+        <div class="card-meta">
+          <span class="badge badge-ai">AI in Education</span>
+          <span class="card-date">April 2026</span>
+        </div>
+        <h2>Does Saying Please to AI Actually Help?</h2>
+        <p>Research on whether politeness affects AI response quality, and what those extra tokens cost at scale.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/ai-in-education/2026-04-08%20AI%20Politeness%20Effects%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="ai" data-title="AI in District Operations: Evidence and Outcomes" data-desc="Synthesis of peer-reviewed research, survey data, and case studies on what works and what doesn't when districts deploy AI for operations.">
+        <div class="card-meta">
+          <span class="badge badge-ai">AI in Education</span>
+          <span class="card-date">April 2026</span>
+        </div>
+        <h2>AI in District Operations: Evidence and Outcomes</h2>
+        <p>Synthesis of peer-reviewed research, survey data, and case studies on what works and what doesn't when districts deploy AI for operations.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/ai-in-education/2026-04-12%20AI%20District%20Operations%20Evidence%20and%20Outcomes%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="ai" data-title="Introducing AI into School District Operations" data-desc="Comprehensive analysis of AI adoption in K-12 district operations: policy frameworks, case studies, measurable outcomes, and risks across 80+ sources.">
+        <div class="card-meta">
+          <span class="badge badge-ai">AI in Education</span>
+          <span class="card-date">April 2026</span>
+        </div>
+        <h2>Introducing AI into School District Operations</h2>
+        <p>Comprehensive analysis of AI adoption in K-12 district operations: policy frameworks, case studies, measurable outcomes, and risks across 80+ sources.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/ai-in-education/2026-04-12%20AI%20in%20School%20District%20Operations%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="ai" data-title="Claude Code Setup and Token Optimization" data-desc="A practical guide to setting up Claude Code (a.k.a. Clawbot) and avoiding heavy token fees during long-running agentic workflows.">
+        <div class="card-meta">
+          <span class="badge badge-ai">AI in Education</span>
+          <span class="card-date">February 2026</span>
+        </div>
+        <h2>Claude Code Setup and Token Optimization</h2>
+        <p>A practical guide to setting up Claude Code (a.k.a. Clawbot) and avoiding heavy token fees during long-running agentic workflows.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/ai-in-education/2026-02-22%20Claude%20Code%20Setup%20and%20Token%20Optimization%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <!-- District Operations -->
+      <article class="card" data-category="ops" data-title="Negative Lunch Balances: What Do Schools Do to Collect Them?" data-desc="How districts address school meal debt through collection, alternative meals, and universal free programs.">
+        <div class="card-meta">
+          <span class="badge badge-ops">District Operations</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>Negative Lunch Balances: What Do Schools Do to Collect Them?</h2>
+        <p>How districts address school meal debt through collection, alternative meals, and universal free programs.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/district-operations/Negative%20Lunch%20Balance%20Collection%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="ops" data-title="School Nutrition Budget Constraints on Cafeteria Options" data-desc="Why school nutrition budgets constrain menu options, with specific analysis for a small Tennessee district.">
+        <div class="card-meta">
+          <span class="badge badge-ops">District Operations</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>School Nutrition Budget Constraints on Cafeteria Options</h2>
+        <p>Why school nutrition budgets constrain menu options, with specific analysis for a small Tennessee district.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/district-operations/2026-03-13%20School%20Nutrition%20Budget%20Constraints%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <!-- History and Culture -->
+      <article class="card" data-category="hist" data-title="James Garfield, Chester Arthur, and Death by Lightning" data-desc="The assassination of President Garfield, the succession crisis, and the political context of the Gilded Age.">
+        <div class="card-meta">
+          <span class="badge badge-hist">History and Culture</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>James Garfield, Chester Arthur, and Death by Lightning</h2>
+        <p>The assassination of President Garfield, the succession crisis, and the political context of the Gilded Age.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/history-and-culture/2026-03-08%20Garfield%20and%20Death%20by%20Lightning%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="hist" data-title="Famous Second Sons in European and British Primogeniture" data-desc="How primogeniture shaped career paths and societal roles for younger sons in aristocratic families.">
+        <div class="card-meta">
+          <span class="badge badge-hist">History and Culture</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>Famous Second Sons in European and British Primogeniture</h2>
+        <p>How primogeniture shaped career paths and societal roles for younger sons in aristocratic families.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/history-and-culture/2026-03-31%20Second%20Sons%20in%20Primogeniture%20Deep%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="hist" data-title="The History and Cultural Life of the French Word Gueule" data-desc="How a Latin word for throat became modern French slang's most expressive insult, battle cry, and term of affection.">
+        <div class="card-meta">
+          <span class="badge badge-hist">History and Culture</span>
+          <span class="card-date">May 2026</span>
+        </div>
+        <h2>The History and Cultural Life of the French Word Gueule</h2>
+        <p>How a Latin word for throat became modern French slang's most expressive insult, battle cry, and term of affection.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/history-and-culture/2026-05-05%20Gueule%20French%20History%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <!-- Personal Interest -->
+      <article class="card" data-category="personal" data-title="Thumbs Up as Passive-Aggressive Communication" data-desc="How the thumbs-up emoji became a contested symbol of passive-aggressive communication across generations.">
+        <div class="card-meta">
+          <span class="badge badge-personal">Personal Interest</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>Thumbs Up as Passive-Aggressive Communication</h2>
+        <p>How the thumbs-up emoji became a contested symbol of passive-aggressive communication across generations.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/personal-interest/2026-03-29%20Thumbs%20Up%20Passive-Aggressive%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="personal" data-title="Diet Drinks vs. Sugar-Sweetened Beverages in Adolescents" data-desc="Comparing health effects of diet drinks and sugar-sweetened beverages on adolescent health.">
+        <div class="card-meta">
+          <span class="badge badge-personal">Personal Interest</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>Diet Drinks vs. Sugar-Sweetened Beverages in Adolescents</h2>
+        <p>Comparing health effects of diet drinks and sugar-sweetened beverages on adolescent health.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/personal-interest/Diet%20Drinks%20vs%20Sugar-Sweetened%20Beverages%20in%20Adolescents%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="personal" data-title="Feathered Flags, Liability, and Automobile Accidents" data-desc="Liability risks and legal implications of feathered advertising flags in commercial settings.">
+        <div class="card-meta">
+          <span class="badge badge-personal">Personal Interest</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>Feathered Flags, Liability, and Automobile Accidents</h2>
+        <p>Liability risks and legal implications of feathered advertising flags in commercial settings.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/personal-interest/Feathered%20Flags%20Liability%20and%20Automobile%20Accidents%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="personal" data-title="Bubble Craps vs. Traditional Craps: A Probability Analysis" data-desc="Are bubble craps machines rigged, or do they match the same dice probabilities as a live table? The math, the myths, and the regulations.">
+        <div class="card-meta">
+          <span class="badge badge-personal">Personal Interest</span>
+          <span class="card-date">April 2026</span>
+        </div>
+        <h2>Bubble Craps vs. Traditional Craps: A Probability Analysis</h2>
+        <p>Are bubble craps machines rigged, or do they match the same dice probabilities as a live table? The math, the myths, and the regulations.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/personal-interest/2026-04-09%20Bubble%20Craps%20vs%20Traditional%20Craps%20Probabilities%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="personal" data-title="Health Benefits of Wearing Copper Bracelets" data-desc="Do copper bracelets actually help arthritis or anything else? The double-blind RCTs say no, but the placebo effect and folk tradition explain the persistence.">
+        <div class="card-meta">
+          <span class="badge badge-personal">Personal Interest</span>
+          <span class="card-date">April 2026</span>
+        </div>
+        <h2>Health Benefits of Wearing Copper Bracelets</h2>
+        <p>Do copper bracelets actually help arthritis or anything else? The double-blind RCTs say no, but the placebo effect and folk tradition explain the persistence.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/personal-interest/2026-04-22%20Copper%20Bracelets%20Health%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="personal" data-title="Woodcock-Johnson: A Comedy Research Brief" data-desc="Reference sheet for a McSweeney's-style humor piece about one of the most widely used cognitive achievement tests in American education.">
+        <div class="card-meta">
+          <span class="badge badge-personal">Personal Interest</span>
+          <span class="card-date">April 2026</span>
+        </div>
+        <h2>Woodcock-Johnson: A Comedy Research Brief</h2>
+        <p>Reference sheet for a McSweeney's-style humor piece about one of the most widely used cognitive achievement tests in American education.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/personal-interest/2026-04-18%20Woodcock-Johnson%20Comedy%20Research%20Brief.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="personal" data-title="The Horne Family: Generations of Appalachia" data-desc="A genealogical deep research report tracing 1,908 individuals and 184 direct paternal-line ancestors fourteen generations back to 1599 London.">
+        <div class="card-meta">
+          <span class="badge badge-personal">Personal Interest</span>
+          <span class="card-date">April 2026</span>
+        </div>
+        <h2>The Horne Family: Generations of Appalachia</h2>
+        <p>A genealogical deep research report tracing 1,908 individuals and 184 direct paternal-line ancestors fourteen generations back to 1599 London.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/personal-interest/2026-04-15%20The%20Horne%20Family%20Generations%20of%20Appalachia.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="personal" data-title="The Quillen-Casteel Family: Maternal Generations of Appalachia" data-desc="170 direct maternal-line ancestors across 15 generations, anchored at Kathy Eileen Quillen (b. 1954, Gate City, Scott Co. VA).">
+        <div class="card-meta">
+          <span class="badge badge-personal">Personal Interest</span>
+          <span class="card-date">April 2026</span>
+        </div>
+        <h2>The Quillen-Casteel Family: Maternal Generations of Appalachia</h2>
+        <p>170 direct maternal-line ancestors across 15 generations, anchored at Kathy Eileen Quillen (b. 1954, Gate City, Scott Co. VA).</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/personal-interest/2026-04-15%20The%20Quillen-Casteel%20Family%20Maternal%20Generations%20of%20Appalachia.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="personal" data-title="Ice Cream as a Superfood" data-desc="A skeptical look at the Harvard 'ice cream paradox' and the broader question of whether full-fat dairy ice cream earns the superfood label. Verdict: no, but the cohort data is more interesting than you'd expect.">
+        <div class="card-meta">
+          <span class="badge badge-personal">Personal Interest</span>
+          <span class="card-date">May 2026</span>
+        </div>
+        <h2>Ice Cream as a Superfood</h2>
+        <p>A skeptical look at the Harvard "ice cream paradox" and the broader question of whether full-fat dairy ice cream earns the superfood label. Verdict: no, but the cohort data is more interesting than you'd expect.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/personal-interest/2026-05-02%20Ice%20Cream%20Superfood%20Research%20Report.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <!-- Media Companions -->
+      <article class="card" data-category="media" data-title="The Trapeze Swinger: Companion Guide" data-desc="Iron & Wine's nine-minute 2004 folk song — one chord loop, eight verses of 'please remember me,' and an unlikely canonical grief anthem.">
+        <div class="card-meta">
+          <span class="badge badge-media">Media Companions</span>
+          <span class="card-date">April 2026</span>
+        </div>
+        <h2>The Trapeze Swinger: Companion Guide</h2>
+        <p>Iron & Wine's nine-minute 2004 folk song — one chord loop, eight verses of "please remember me," and an unlikely canonical grief anthem.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/media-companions/2026-04-20%20The%20Trapeze%20Swinger%20Companion%20Guide.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="media" data-title="Whiplash: Companion Guide" data-desc="Damien Chazelle's $3.3M jazz drumming thriller that won three Oscars and still divides audiences on whether its ending is a triumph or a tragedy.">
+        <div class="card-meta">
+          <span class="badge badge-media">Media Companions</span>
+          <span class="card-date">April 2026</span>
+        </div>
+        <h2>Whiplash: Companion Guide</h2>
+        <p>Damien Chazelle's $3.3M jazz drumming thriller that won three Oscars and still divides audiences on whether its ending is a triumph or a tragedy.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/media-companions/2026-04-09%20Whiplash%20Companion%20Guide.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="media" data-title="Severance: Companion Guide" data-desc="Analysis of the Apple TV+ series exploring work-life balance, corporate control, identity, and consciousness.">
+        <div class="card-meta">
+          <span class="badge badge-media">Media Companions</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>Severance: Companion Guide</h2>
+        <p>Analysis of the Apple TV+ series exploring work-life balance, corporate control, identity, and consciousness.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/media-companions/2026-03-20%20Severance%20Companion%20Guide.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="media" data-title="Radical Acceptance: Companion Guide" data-desc="Guide to Tara Brach's book on mindfulness, Buddhist psychology, and living authentically.">
+        <div class="card-meta">
+          <span class="badge badge-media">Media Companions</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>Radical Acceptance: Companion Guide</h2>
+        <p>Guide to Tara Brach's book on mindfulness, Buddhist psychology, and living authentically.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/media-companions/2026-03-29%20Radical%20Acceptance%20Companion%20Guide.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="media" data-title="Project Hail Mary: Companion Guide" data-desc="Analysis of Andy Weir's novel about space survival and interstellar friendship.">
+        <div class="card-meta">
+          <span class="badge badge-media">Media Companions</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>Project Hail Mary: Companion Guide</h2>
+        <p>Analysis of Andy Weir's novel about space survival and interstellar friendship.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/media-companions/2026-03-28%20Project%20Hail%20Mary%20Companion%20Guide.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="media" data-title="In France Profound: Companion Guide" data-desc="T.D. Allman's posthumous work combining memoir, history, and travelogue about a French mountain town.">
+        <div class="card-meta">
+          <span class="badge badge-media">Media Companions</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>In France Profound: Companion Guide</h2>
+        <p>T.D. Allman's posthumous work combining memoir, history, and travelogue about a French mountain town.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/media-companions/2026-03-18%20In%20France%20Profound%20Companion%20Guide.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="media" data-title="Following the Sun: Companion Guide" data-desc="Margaret Bensfield Sullivan's family memoir about a year-long global adventure following warm weather.">
+        <div class="card-meta">
+          <span class="badge badge-media">Media Companions</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>Following the Sun: Companion Guide</h2>
+        <p>Margaret Bensfield Sullivan's family memoir about a year-long global adventure following warm weather.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/media-companions/2026-03-18%20Following%20the%20Sun%20Companion%20Guide.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="media" data-title="The Hard Thing About Hard Things: Companion Guide" data-desc="Ben Horowitz's honest leadership book on navigating difficult business challenges.">
+        <div class="card-meta">
+          <span class="badge badge-media">Media Companions</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>The Hard Thing About Hard Things: Companion Guide</h2>
+        <p>Ben Horowitz's honest leadership book on navigating difficult business challenges.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/media-companions/2026-03-18%20The%20Hard%20Thing%20About%20Hard%20Things%20Companion%20Guide.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="media" data-title="DTF St. Louis: Companion Guide" data-desc="HBO's 2026 limited series from Steven Conrad with Jason Bateman, David Harbour, Linda Cardellini, Richard Jenkins, and Peter Sarsgaard.">
+        <div class="card-meta">
+          <span class="badge badge-media">Media Companions</span>
+          <span class="card-date">March 2026</span>
+        </div>
+        <h2>DTF St. Louis: Companion Guide</h2>
+        <p>HBO's 2026 limited series from Steven Conrad with Jason Bateman, David Harbour, Linda Cardellini, Richard Jenkins, and Peter Sarsgaard.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/media-companions/2026-03-18%20DTF%20St.%20Louis%20Companion%20Guide.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="media" data-title="Succession: Companion Guide" data-desc="Spoiler-free guide to HBO's four-season drama (2018–2023) about Logan Roy and the four children circling Waystar Royco.">
+        <div class="card-meta">
+          <span class="badge badge-media">Media Companions</span>
+          <span class="card-date">April 2026</span>
+        </div>
+        <h2>Succession: Companion Guide</h2>
+        <p>Spoiler-free guide to HBO's four-season drama (2018–2023) about Logan Roy and the four children circling Waystar Royco.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/media-companions/2026-04-12%20Succession%20Companion%20Guide.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="media" data-title="Ezra Koenig: Companion Guide" data-desc="A guide to the Vampire Weekend frontman, songwriter, radio host, and anime creator — one of indie rock's most interesting pop polymaths.">
+        <div class="card-meta">
+          <span class="badge badge-media">Media Companions</span>
+          <span class="card-date">April 2026</span>
+        </div>
+        <h2>Ezra Koenig: Companion Guide</h2>
+        <p>A guide to the Vampire Weekend frontman, songwriter, radio host, and anime creator — one of indie rock's most interesting pop polymaths.</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/media-companions/2026-04-23%20Ezra%20Koenig%20Companion%20Guide.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <article class="card" data-category="media" data-title="Hannah Hunt: Companion Guide" data-desc="Vampire Weekend's hushed piano ballad and the emotional high point of Modern Vampires of the City (2013).">
+        <div class="card-meta">
+          <span class="badge badge-media">Media Companions</span>
+          <span class="card-date">April 2026</span>
+        </div>
+        <h2>Hannah Hunt: Companion Guide</h2>
+        <p>Vampire Weekend's hushed piano ballad and the emotional high point of Modern Vampires of the City (2013).</p>
+        <a href="https://github.com/jasonbhorne/research-shelf/raw/main/reports/media-companions/2026-04-23%20Hannah%20Hunt%20Companion%20Guide.pdf" target="_blank" class="download-btn">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </a>
+      </article>
+
+      <!-- Empty state -->
+      <div class="empty-state" id="emptyState">No results found. Try a different search term or category.</div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>All research produced using Claude Code's deep research pipeline. Reports are provided as-is for educational and informational purposes.</p>
+  </footer>
+
+  <script>
+    const cards = Array.from(document.querySelectorAll('.card'));
+    const pills = Array.from(document.querySelectorAll('.filter-pill'));
+    const searchInput = document.getElementById('search');
+    const countLine = document.getElementById('countLine');
+    const emptyState = document.getElementById('emptyState');
+
+    let activeFilter = 'all';
+    let searchQuery = '';
+
+    function updateDisplay() {
+      let visible = 0;
+
+      cards.forEach(card => {
+        const cat = card.dataset.category;
+        const title = card.dataset.title.toLowerCase();
+        const desc = card.dataset.desc.toLowerCase();
+
+        const matchesFilter = activeFilter === 'all' || cat === activeFilter;
+        const matchesSearch = searchQuery === '' || title.includes(searchQuery) || desc.includes(searchQuery);
+
+        if (matchesFilter && matchesSearch) {
+          card.style.display = '';
+          visible++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      const total = cards.length;
+      if (activeFilter === 'all' && searchQuery === '') {
+        countLine.textContent = total + ' reports';
+      } else {
+        countLine.textContent = visible + ' of ' + total + ' reports';
+      }
+
+      if (visible === 0) {
+        emptyState.classList.add('visible');
+      } else {
+        emptyState.classList.remove('visible');
+      }
+    }
+
+    pills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        pills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        activeFilter = pill.dataset.filter;
+        updateDisplay();
+      });
+    });
+
+    searchInput.addEventListener('input', () => {
+      searchQuery = searchInput.value.trim().toLowerCase();
+      updateDisplay();
+    });
+
+    // Initialize count
+    updateDisplay();
+  </script>
+
+
+  <!-- iframe auto-resize: report content height to the embedding page -->
+  <script>
+    (function () {
+      function postHeight() {
+        if (window.parent === window) return;
+        var h = Math.max(
+          document.documentElement.scrollHeight,
+          document.body ? document.body.scrollHeight : 0
+        );
+        window.parent.postMessage({ researchShelf: true, height: h }, "*");
+      }
+      window.addEventListener("load", postHeight);
+      window.addEventListener("resize", postHeight);
+      if (window.ResizeObserver) {
+        new ResizeObserver(postHeight).observe(document.documentElement);
+      }
+      // also fire after the filter/search script mutates the grid
+      document.addEventListener("click", function () { setTimeout(postHeight, 50); });
+      document.addEventListener("input", function () { setTimeout(postHeight, 50); });
+    })();
+  </script>
+
+</body>
+</html>

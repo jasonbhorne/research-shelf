@@ -1,0 +1,48 @@
+================================================================
+THE RESEARCH SHELF - SQUARESPACE EMBED
+Paste this ONCE into a single Code Block on the Research page.
+After that you never touch Squarespace for the shelf again.
+================================================================
+
+SETUP (one time):
+  1. Edit the "Research" page on jasonhorne.org (jasonhorne.org/research).
+  2. Delete the existing Research Shelf Code Block (the big one with all the cards).
+  3. Add ONE new Code Block.
+  4. Copy everything between the lines below into that Code Block.
+  5. Save and publish.
+
+From then on, /publish-research rebuilds index.html and pushes it;
+the iframe below always loads the latest version, and auto-resizes
+to fit. No pasting, no count to bump.
+
+WHY AN IFRAME (and not inline like AI This Week / What I'm Reading):
+The shelf page ships its own CSS reset (* and body rules) plus search,
+filter, and count JavaScript. Injecting that inline would clobber the
+rest of your Squarespace page styling. The iframe isolates it cleanly
+and the postMessage handler keeps the height flush so there's no inner
+scrollbar.
+
+---------------- COPY FROM HERE ----------------
+<iframe
+  id="research-shelf-frame"
+  src="https://jasonbhorne.github.io/research-shelf/index.html"
+  title="The Research Shelf"
+  style="width:1px;min-width:100%;border:0;display:block;min-height:600px;"
+  scrolling="no"
+  loading="lazy"></iframe>
+<script>
+(function () {
+  var frame = document.getElementById("research-shelf-frame");
+  window.addEventListener("message", function (e) {
+    if (!e.data || e.data.researchShelf !== true) return;
+    if (typeof e.data.height === "number" && e.data.height > 0) {
+      frame.style.height = e.data.height + "px";
+    }
+  });
+})();
+</script>
+----------------- TO HERE -----------------------
+
+NOTE: GitHub Pages must be enabled on the jasonbhorne/research-shelf repo
+(Settings > Pages > Branch: main / root). The /publish-research skill
+checks this. Live page URL: https://jasonbhorne.github.io/research-shelf/
